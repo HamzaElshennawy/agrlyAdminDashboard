@@ -1,14 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { apiService } from '../services/api';
-import { User } from '../types/api';
-import { Plus, Search, Edit, Trash2, Shield, UserCheck, AlertCircle } from 'lucide-react';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { useState, useEffect } from "react";
+import { apiService } from "../services/api";
+import { User } from "../types/api";
+import {
+  Plus,
+  Search,
+  Edit,
+  Trash2,
+  Shield,
+  UserCheck,
+  AlertCircle,
+} from "lucide-react";
 
 export function UsersManager() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [_, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editUser, setEditUser] = useState<User | null>(null);
+  const [editForm, setEditForm] = useState<Partial<User>>({});
 
   useEffect(() => {
     loadUsers();
@@ -19,8 +31,8 @@ export function UsersManager() {
     try {
       const response = await apiService.getUsers();
       setUsers(Array.isArray(response) ? response : []);
-    } catch (err) {
-      setError('Failed to load users');
+    } catch {
+      setError("Failed to load users");
       setUsers([]);
     } finally {
       setLoading(false);
@@ -28,21 +40,50 @@ export function UsersManager() {
   };
 
   const handleDeleteUser = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this user?')) return;
+    if (!confirm("Are you sure you want to delete this user?")) return;
 
     try {
       await apiService.deleteUser(id);
-      setUsers(users.filter(user => user.id !== id));
-    } catch (err) {
-      setError('Failed to delete user');
+      setUsers(users.filter((user) => user.id !== id));
+    } catch {
+      setError("Failed to delete user");
     }
   };
 
-  const filteredUsers = users.filter(user =>
-    user.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
+  const handleEditIconClick = (user: User) => {
+    setEditUser(user);
+    setEditForm(user);
+    setShowEditModal(true);
+  };
+
+  const handleEditFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setEditForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleEditFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editUser) return;
+    try {
+      await apiService.editUser({ ...editUser, ...editForm });
+      setShowEditModal(false);
+      setEditUser(null);
+      setEditForm({});
+      loadUsers();
+    } catch {
+      setError("Failed to update user");
+    }
+  };
+
+  const filteredUsers = users.filter(
+    (user) =>
+      user.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {
@@ -121,14 +162,16 @@ export function UsersManager() {
                     <div className="flex items-center">
                       <div className="h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center">
                         <span className="text-sm font-medium text-gray-700">
-                          {user.firstName?.[0] || user.username?.[0] || 'U'}
+                          {user.firstName?.[0] || user.username?.[0] || "U"}
                         </span>
                       </div>
                       <div className="ml-4">
                         <div className="text-sm font-medium text-gray-900">
                           {user.firstName} {user.lastName}
                         </div>
-                        <div className="text-sm text-gray-500">{user.email}</div>
+                        <div className="text-sm text-gray-500">
+                          {user.email}
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -148,15 +191,21 @@ export function UsersManager() {
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                      user.isAdmin 
-                        ? 'bg-purple-100 text-purple-800' 
-                        : user.isSuperhost 
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-gray-100 text-gray-800'
-                    }`}>
+                    <span
+                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                        user.isAdmin
+                          ? "bg-purple-100 text-purple-800"
+                          : user.isSuperhost
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
                       {user.isAdmin && <Shield className="h-3 w-3 mr-1" />}
-                      {user.isAdmin ? 'Admin' : user.isSuperhost ? 'Superhost' : 'User'}
+                      {user.isAdmin
+                        ? "Admin"
+                        : user.isSuperhost
+                        ? "Superhost"
+                        : "User"}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -164,10 +213,288 @@ export function UsersManager() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex items-center justify-end gap-2">
-                      <button className="text-blue-600 hover:text-blue-900 p-1">
+                      <button
+                        title="Edit User"
+                        className="text-blue-600 hover:text-blue-900 p-1"
+                        onClick={() => handleEditIconClick(user)}
+                      >
                         <Edit className="h-4 w-4" />
                       </button>
-                      <button 
+                      {/* Edit User Modal */}
+                      {showEditModal && editUser && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+                          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg text-left max-h-[95vh] overflow-y-auto">
+                            <h2 className="text-xl font-bold mb-4 text-left">
+                              Edit User
+                            </h2>
+                            <form
+                              onSubmit={handleEditFormSubmit}
+                              className="space-y-4 text-left"
+                            >
+                              <div>
+                                <label
+                                  htmlFor="firstName"
+                                  className="block text-sm font-medium text-gray-700 mb-1"
+                                >
+                                  First Name
+                                </label>
+                                <input
+                                  type="text"
+                                  id="firstName"
+                                  name="firstName"
+                                  value={editForm.firstName || ""}
+                                  onChange={handleEditFormChange}
+                                  className="w-full border rounded px-3 py-2"
+                                />
+                              </div>
+                              <div>
+                                <label
+                                  htmlFor="lastName"
+                                  className="block text-sm font-medium text-gray-700 mb-1"
+                                >
+                                  Last Name
+                                </label>
+                                <input
+                                  type="text"
+                                  id="lastName"
+                                  name="lastName"
+                                  value={editForm.lastName || ""}
+                                  onChange={handleEditFormChange}
+                                  className="w-full border rounded px-3 py-2"
+                                />
+                              </div>
+                              <div>
+                                <label
+                                  htmlFor="email"
+                                  className="block text-sm font-medium text-gray-700 mb-1"
+                                >
+                                  Email
+                                </label>
+                                <input
+                                  type="email"
+                                  id="email"
+                                  name="email"
+                                  value={editForm.email || ""}
+                                  onChange={handleEditFormChange}
+                                  className="w-full border rounded px-3 py-2"
+                                />
+                              </div>
+                              <div>
+                                <label
+                                  htmlFor="username"
+                                  className="block text-sm font-medium text-gray-700 mb-1"
+                                >
+                                  Username
+                                </label>
+                                <input
+                                  type="text"
+                                  id="username"
+                                  name="username"
+                                  value={editForm.username || ""}
+                                  onChange={handleEditFormChange}
+                                  className="w-full border rounded px-3 py-2"
+                                />
+                              </div>
+                              <div>
+                                <label
+                                  htmlFor="nationalID"
+                                  className="block text-sm font-medium text-gray-700 mb-1"
+                                >
+                                  National ID
+                                </label>
+                                <input
+                                  type="text"
+                                  id="nationalID"
+                                  name="nationalID"
+                                  value={editForm.nationalID || ""}
+                                  onChange={handleEditFormChange}
+                                  className="w-full border rounded px-3 py-2"
+                                />
+                              </div>
+                              <div>
+                                <label
+                                  htmlFor="phone"
+                                  className="block text-sm font-medium text-gray-700 mb-1"
+                                >
+                                  Phone
+                                </label>
+                                <input
+                                  type="text"
+                                  id="phone"
+                                  name="phone"
+                                  value={editForm.phone || ""}
+                                  onChange={handleEditFormChange}
+                                  className="w-full border rounded px-3 py-2"
+                                />
+                              </div>
+                              <div>
+                                <label
+                                  htmlFor="profilePictureUrl"
+                                  className="block text-sm font-medium text-gray-700 mb-1"
+                                >
+                                  Profile Picture URL
+                                </label>
+                                <input
+                                  type="text"
+                                  id="profilePictureUrl"
+                                  name="profilePictureUrl"
+                                  value={editForm.profilePictureUrl || ""}
+                                  onChange={handleEditFormChange}
+                                  className="w-full border rounded px-3 py-2"
+                                />
+                              </div>
+                              <div>
+                                <label
+                                  htmlFor="bio"
+                                  className="block text-sm font-medium text-gray-700 mb-1"
+                                >
+                                  Bio
+                                </label>
+                                <input
+                                  type="text"
+                                  id="bio"
+                                  name="bio"
+                                  value={editForm.bio || ""}
+                                  onChange={handleEditFormChange}
+                                  className="w-full border rounded px-3 py-2"
+                                />
+                              </div>
+                              <div>
+                                <label
+                                  htmlFor="dateOfBirth"
+                                  className="block text-sm font-medium text-gray-700 mb-1"
+                                >
+                                  Date of Birth
+                                </label>
+                                <input
+                                  type="date"
+                                  id="dateOfBirth"
+                                  name="dateOfBirth"
+                                  value={editForm.dateOfBirth || ""}
+                                  onChange={handleEditFormChange}
+                                  className="w-full border rounded px-3 py-2"
+                                />
+                              </div>
+                              <div>
+                                <label
+                                  htmlFor="hostSince"
+                                  className="block text-sm font-medium text-gray-700 mb-1"
+                                >
+                                  Host Since
+                                </label>
+                                <input
+                                  type="date"
+                                  id="hostSince"
+                                  name="hostSince"
+                                  value={editForm.hostSince || ""}
+                                  onChange={handleEditFormChange}
+                                  className="w-full border rounded px-3 py-2"
+                                />
+                              </div>
+                              <div>
+                                <label
+                                  htmlFor="preferredLanguage"
+                                  className="block text-sm font-medium text-gray-700 mb-1"
+                                >
+                                  Preferred Language
+                                </label>
+                                <input
+                                  type="text"
+                                  id="preferredLanguage"
+                                  name="preferredLanguage"
+                                  value={editForm.preferredLanguage || ""}
+                                  onChange={handleEditFormChange}
+                                  className="w-full border rounded px-3 py-2"
+                                />
+                              </div>
+                              <div>
+                                <label
+                                  htmlFor="timezone"
+                                  className="block text-sm font-medium text-gray-700 mb-1"
+                                >
+                                  Timezone
+                                </label>
+                                <input
+                                  type="text"
+                                  id="timezone"
+                                  name="timezone"
+                                  value={editForm.timezone || ""}
+                                  onChange={handleEditFormChange}
+                                  className="w-full border rounded px-3 py-2"
+                                />
+                              </div>
+                              <div className="grid grid-cols-2 gap-4 mt-2">
+                                <label className="flex items-center gap-2">
+                                  <input
+                                    type="checkbox"
+                                    name="isAdmin"
+                                    checked={!!editForm.isAdmin}
+                                    onChange={handleEditFormChange}
+                                  />
+                                  <span>Admin</span>
+                                </label>
+                                <label className="flex items-center gap-2">
+                                  <input
+                                    type="checkbox"
+                                    name="isSuperhost"
+                                    checked={!!editForm.isSuperhost}
+                                    onChange={handleEditFormChange}
+                                  />
+                                  <span>Superhost</span>
+                                </label>
+                                <label className="flex items-center gap-2">
+                                  <input
+                                    type="checkbox"
+                                    name="governmentIdVerified"
+                                    checked={!!editForm.governmentIdVerified}
+                                    onChange={handleEditFormChange}
+                                  />
+                                  <span>Government ID Verified</span>
+                                </label>
+                                <label className="flex items-center gap-2">
+                                  <input
+                                    type="checkbox"
+                                    name="emailVerified"
+                                    checked={!!editForm.emailVerified}
+                                    onChange={handleEditFormChange}
+                                  />
+                                  <span>Email Verified</span>
+                                </label>
+                                <label className="flex items-center gap-2">
+                                  <input
+                                    type="checkbox"
+                                    name="phoneVerified"
+                                    checked={!!editForm.phoneVerified}
+                                    onChange={handleEditFormChange}
+                                  />
+                                  <span>Phone Verified</span>
+                                </label>
+                              </div>
+                              <div className="flex justify-end gap-2 mt-6">
+                                <button
+                                  type="button"
+                                  className="px-4 py-2 bg-gray-200 rounded"
+                                  onClick={() => {
+                                    setShowEditModal(false);
+                                    setEditUser(null);
+                                    setEditForm({});
+                                  }}
+                                >
+                                  Cancel
+                                </button>
+                                <button
+                                  type="submit"
+                                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                >
+                                  Save
+                                </button>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      )}
+                      <button
+                        title="Delete User"
                         onClick={() => handleDeleteUser(user.id)}
                         className="text-red-600 hover:text-red-900 p-1"
                       >

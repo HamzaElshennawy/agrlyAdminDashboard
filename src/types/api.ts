@@ -30,7 +30,7 @@ export interface Apartment {
   bedrooms: number;
   maxGuests: number;
   squareMeter: number;
-  amenities?: any;
+  amenities?: string[];
   availabilityStatus: string;
   minimumStay: number;
   addressLine1: string;
@@ -84,7 +84,7 @@ export interface LoginResponse {
   expiresIn: number;
 }
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T> {
   data?: T;
   error?: string;
   message?: string;

@@ -1,13 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { apiService } from '../services/api';
-import { Apartment } from '../types/api';
-import { Plus, Search, Edit, Trash2, MapPin, Star, AlertCircle } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { apiService } from "../services/api";
+import { Apartment } from "../types/api";
+import {
+  Plus,
+  Search,
+  Edit,
+  Trash2,
+  MapPin,
+  Star,
+  AlertCircle,
+} from "lucide-react";
 
 export function ApartmentsManager() {
   const [apartments, setApartments] = useState<Apartment[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     loadApartments();
@@ -18,8 +26,8 @@ export function ApartmentsManager() {
     try {
       const response = await apiService.getApartments();
       setApartments(Array.isArray(response) ? response : []);
-    } catch (err) {
-      setError('Failed to load apartments');
+    } catch {
+      setError("Failed to load apartments");
       setApartments([]);
     } finally {
       setLoading(false);
@@ -27,20 +35,21 @@ export function ApartmentsManager() {
   };
 
   const handleDeleteApartment = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this apartment?')) return;
+    if (!confirm("Are you sure you want to delete this apartment?")) return;
 
     try {
       await apiService.deleteApartment(id);
-      setApartments(apartments.filter(apartment => apartment.id !== id));
-    } catch (err) {
-      setError('Failed to delete apartment');
+      setApartments(apartments.filter((apartment) => apartment.id !== id));
+    } catch {
+      setError("Failed to delete apartment");
     }
   };
 
-  const filteredApartments = apartments.filter(apartment =>
-    apartment.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    apartment.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    apartment.city?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredApartments = apartments.filter(
+    (apartment) =>
+      apartment.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      apartment.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      apartment.city?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {
@@ -89,11 +98,14 @@ export function ApartmentsManager() {
       {/* Apartments Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredApartments.map((apartment) => (
-          <div key={apartment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+          <div
+            key={apartment.id}
+            className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+          >
             <div className="h-48 bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
               {apartment.photos && apartment.photos.length > 0 ? (
-                <img 
-                  src={apartment.photos[0]} 
+                <img
+                  src={apartment.photos[0]}
                   alt={apartment.title}
                   className="w-full h-full object-cover"
                 />
@@ -104,15 +116,21 @@ export function ApartmentsManager() {
                 </div>
               )}
             </div>
-            
+
             <div className="p-4">
               <div className="flex items-start justify-between mb-2">
-                <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">{apartment.title}</h3>
+                <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
+                  {apartment.title}
+                </h3>
                 <div className="flex items-center gap-2 ml-2">
-                  <button className="text-blue-600 hover:text-blue-900 p-1">
+                  <button
+                    title="Edit"
+                    className="text-blue-600 hover:text-blue-900 p-1"
+                  >
                     <Edit className="h-4 w-4" />
                   </button>
-                  <button 
+                  <button
+                    title="Delete"
                     onClick={() => handleDeleteApartment(apartment.id)}
                     className="text-red-600 hover:text-red-900 p-1"
                   >
@@ -123,19 +141,25 @@ export function ApartmentsManager() {
 
               <div className="flex items-center text-gray-600 mb-2">
                 <MapPin className="h-4 w-4 mr-1" />
-                <span className="text-sm">{apartment.city}, {apartment.state}</span>
+                <span className="text-sm">
+                  {apartment.city}, {apartment.state}
+                </span>
               </div>
 
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center">
                   <Star className="h-4 w-4 text-yellow-500 mr-1" />
-                  <span className="text-sm font-medium">{apartment.rating || 'No rating'}</span>
+                  <span className="text-sm font-medium">
+                    {apartment.rating || "No rating"}
+                  </span>
                 </div>
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  apartment.availabilityStatus === 'available' 
-                    ? 'bg-green-100 text-green-800' 
-                    : 'bg-red-100 text-red-800'
-                }`}>
+                <span
+                  className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    apartment.availabilityStatus === "available"
+                      ? "bg-green-100 text-green-800"
+                      : "bg-red-100 text-red-800"
+                  }`}
+                >
                   {apartment.availabilityStatus}
                 </span>
               </div>
@@ -149,20 +173,24 @@ export function ApartmentsManager() {
                 </div>
               </div>
 
-              {apartment.apartment_tags && apartment.apartment_tags.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-1">
-                  {apartment.apartment_tags.slice(0, 3).map((tag, index) => (
-                    <span key={index} className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">
-                      {tag}
-                    </span>
-                  ))}
-                  {apartment.apartment_tags.length > 3 && (
-                    <span className="px-2 py-1 bg-gray-100 text-gray-500 rounded-full text-xs">
-                      +{apartment.apartment_tags.length - 3}
-                    </span>
-                  )}
-                </div>
-              )}
+              {apartment.apartment_tags &&
+                apartment.apartment_tags.length > 0 && (
+                  <div className="mt-3 flex flex-wrap gap-1">
+                    {apartment.apartment_tags.slice(0, 3).map((tag, index) => (
+                      <span
+                        key={index}
+                        className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                    {apartment.apartment_tags.length > 3 && (
+                      <span className="px-2 py-1 bg-gray-100 text-gray-500 rounded-full text-xs">
+                        +{apartment.apartment_tags.length - 3}
+                      </span>
+                    )}
+                  </div>
+                )}
             </div>
           </div>
         ))}

@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import { AuthProvider, useAuth } from './context/AuthContext';
-import { LoginForm } from './components/LoginForm';
-import { Layout } from './components/Layout';
-import { Dashboard } from './components/Dashboard';
-import { UsersManager } from './components/UsersManager';
-import { ApartmentsManager } from './components/ApartmentsManager';
-import { CategoriesManager } from './components/CategoriesManager';
-import { TransactionsManager } from './components/TransactionsManager';
-import { TickerQManager } from './components/TickerQManager';
+import { useState } from "react";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import { LoginForm } from "./components/LoginForm";
+import { Layout } from "./components/Layout";
+import { Dashboard } from "./components/Dashboard";
+import { UsersManager } from "./components/UsersManager";
+import { ApartmentsManager } from "./components/ApartmentsManager";
+import { CategoriesManager } from "./components/CategoriesManager";
+import { TransactionsManager } from "./components/TransactionsManager";
+//import { TickerQManager } from './components/TickerQManager';
 
 function AppContent() {
   const { isAuthenticated, loading } = useAuth();
-  const [currentView, setCurrentView] = useState('dashboard');
+  const [currentView, setCurrentView] = useState("dashboard");
 
   if (loading) {
     return (
@@ -27,16 +27,16 @@ function AppContent() {
 
   const renderCurrentView = () => {
     switch (currentView) {
-      case 'users':
+      case "users":
         return <UsersManager />;
-      case 'apartments':
+      case "apartments":
         return <ApartmentsManager />;
-      case 'categories':
+      case "categories":
         return <CategoriesManager />;
-      case 'transactions':
+      case "transactions":
         return <TransactionsManager />;
-      case 'tickerq':
-        return <TickerQManager />;
+      //case 'tickerq':
+      //  return <TickerQManager />;
       default:
         return <Dashboard />;
     }

@@ -1,4 +1,14 @@
-const API_BASE_URL = "http://agrly.runasp.net";
+import {
+  User,
+  Apartment,
+  Category,
+  Transaction,
+  ApiResponse,
+  LoginRequest,
+  LoginResponse,
+} from "../types/api";
+
+const API_BASE_URL = " https://localhost:7202";
 
 class ApiService {
   private token: string | null = null;
@@ -41,11 +51,14 @@ class ApiService {
   }
 
   // Authentication
-  async login(credentials: { username: string; password: string }) {
-    const response = await this.request<any>("/api/AuthenticateUser/auth", {
-      method: "POST",
-      body: JSON.stringify(credentials),
-    });
+  async login(credentials: LoginRequest): Promise<LoginResponse> {
+    const response = await this.request<LoginResponse>(
+      "/api/AuthenticateUser/auth",
+      {
+        method: "POST",
+        body: JSON.stringify(credentials),
+      }
+    );
     console.log(response);
     if (response.token) {
       this.token = response.token;
@@ -61,114 +74,160 @@ class ApiService {
   }
 
   // Users
-  async getUsers() {
-    return this.request<any>("/api/Users/getallusers");
+  async getUsers(): Promise<User[]> {
+    return this.request<User[]>("/api/Users/getallusers");
   }
 
-  async getUser(id: number) {
-    return this.request<any>(`/api/Users/getuser/${id}`);
+  async getUser(id: number): Promise<User> {
+    return this.request<User>(`/api/Users/getuser/${id}`);
   }
 
-  async createUser(user: any) {
-    return this.request<any>("/api/Users/adduser", {
+  async createUser(user: User): Promise<ApiResponse<User>> {
+    return this.request<ApiResponse<User>>("/api/Users/adduser", {
       method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json-patch+json",
+        ...(this.token && { Authorization: `Bearer ${this.token}` }),
+      },
       body: JSON.stringify(user),
     });
   }
 
-  async deleteUser(id: number) {
-    return this.request<any>(`/api/Users/deleteuser/${id}`, {
+  async deleteUser(id: number): Promise<ApiResponse<null>> {
+    return this.request<ApiResponse<null>>(`/api/Users/deleteuser/${id}`, {
       method: "DELETE",
+    });
+  }
+  async editUser(user: User): Promise<ApiResponse<User>> {
+    return this.request<ApiResponse<User>>(`/api/Users/updateuser`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json-patch+json",
+        ...(this.token && { Authorization: `Bearer ${this.token}` }),
+      },
+      body: JSON.stringify(user),
     });
   }
 
   // Apartments
-  async getApartments() {
-    return this.request<any>("/api/Apartments");
+  async getApartments(): Promise<Apartment[]> {
+    return this.request<Apartment[]>("/api/Apartments");
   }
 
-  async getApartment(id: number) {
-    return this.request<any>(`/api/Apartments/${id}`);
+  async getApartment(id: number): Promise<Apartment> {
+    return this.request<Apartment>(`/api/Apartments/${id}`);
   }
 
-  async createApartment(apartment: any) {
-    return this.request<any>("/api/Apartments", {
+  async createApartment(apartment: Apartment): Promise<ApiResponse<Apartment>> {
+    return this.request<ApiResponse<Apartment>>("/api/Apartments", {
       method: "POST",
       body: JSON.stringify(apartment),
     });
   }
 
-  async updateApartment(id: number, apartment: any) {
-    return this.request<any>(`/api/Apartments/${id}`, {
+  async updateApartment(
+    id: number,
+    apartment: Apartment
+  ): Promise<ApiResponse<Apartment>> {
+    return this.request<ApiResponse<Apartment>>(`/api/Apartments/${id}`, {
       method: "PUT",
       body: JSON.stringify(apartment),
     });
   }
 
-  async deleteApartment(id: number) {
-    return this.request<any>(`/api/Apartments/${id}`, {
+  async deleteApartment(id: number): Promise<ApiResponse<null>> {
+    return this.request<ApiResponse<null>>(`/api/Apartments/${id}`, {
       method: "DELETE",
     });
   }
 
-  async searchApartments(query: string, currentPage = 0) {
-    return this.request<any>(
+  async searchApartments(
+    query: string,
+    currentPage = 0
+  ): Promise<ApiResponse<Apartment[]>> {
+    return this.request<ApiResponse<Apartment[]>>(
       `/api/Apartments/search?query=${query}&currentPage=${currentPage}`
     );
   }
 
   // Categories
-  async getCategories() {
-    return this.request<any>("/api/Apartments/categories");
+  async getCategories(): Promise<Category[]> {
+    return this.request<Category[]>("/api/Apartments/categories");
   }
 
-  async createCategory(category: any) {
-    return this.request<any>("/api/Apartments/categories/add", {
-      method: "POST",
-      body: JSON.stringify(category),
+  async createCategory(category: Category): Promise<ApiResponse<Category>> {
+    return this.request<ApiResponse<Category>>(
+      "/api/Apartments/categories/add",
+      {
+        method: "POST",
+        body: JSON.stringify(category),
+      }
+    );
+  }
+
+  async deleteCategory(id: number): Promise<ApiResponse<null>> {
+    return this.request<ApiResponse<null>>(`/api/Apartments/categories/${id}`, {
+      method: "DELETE",
     });
+  }
+
+  async updateCategory(category: Category): Promise<ApiResponse<Category>> {
+    return this.request<ApiResponse<Category>>(
+      `/api/Apartments/categories/update`,
+      {
+        method: "PUT",
+        body: JSON.stringify(category),
+      }
+    );
   }
 
   // Transactions
-  async getTransactions() {
-    return this.request<any>("/api/Transactions");
+  async getTransactions(): Promise<Transaction[]> {
+    return this.request<Transaction[]>("/api/Transactions");
   }
 
-  async getTransaction(id: number) {
-    return this.request<any>(`/api/Transactions/${id}`);
+  async getTransaction(id: number): Promise<Transaction> {
+    return this.request<Transaction>(`/api/Transactions/${id}`);
   }
 
-  async createTransaction(transaction: any) {
-    return this.request<any>("/api/Transactions/create-transaction", {
-      method: "POST",
-      body: JSON.stringify(transaction),
-    });
+  async createTransaction(
+    transaction: Transaction
+  ): Promise<ApiResponse<Transaction>> {
+    return this.request<ApiResponse<Transaction>>(
+      "/api/Transactions/create-transaction",
+      {
+        method: "POST",
+        body: JSON.stringify(transaction),
+      }
+    );
   }
 
   // TickerQ
-  async getTimeTickers() {
-    return this.request<any>("/api/time-tickers");
-  }
+  //async getTimeTickers() {
+  //  return this.request<any>("/api/time-tickers");
+  //}
 
-  async getCronTickers() {
-    return this.request<any>("/api/cron-tickers");
-  }
+  //async getCronTickers() {
+  //  return this.request<any>("/api/cron-tickers");
+  //}
 
-  async getTickerHostStatus() {
-    return this.request<any>("/api/ticker-host/:status");
-  }
+  //async getTickerHostStatus() {
+  //  return this.request<any>("/api/ticker-host/:status");
+  //}
 
-  async startTickerHost() {
-    return this.request<any>("/api/ticker-host/:start", { method: "POST" });
-  }
+  //async startTickerHost() {
+  //  return this.request<any>("/api/ticker-host/:start", { method: "POST" });
+  //}
 
-  async stopTickerHost() {
-    return this.request<any>("/api/ticker-host/:stop", { method: "POST" });
-  }
+  //async stopTickerHost() {
+  //  return this.request<any>("/api/ticker-host/:stop", { method: "POST" });
+  //}
 
-  async getTickerStatuses() {
-    return this.request<any>("/api/ticker/statuses/:get");
-  }
+  //async getTickerStatuses() {
+  //  return this.request<any>("/api/ticker/statuses/:get");
+  //}
 
   // Media Assets
   async uploadApartmentPhoto(apartmentId: string, file: File) {
@@ -183,7 +242,7 @@ class ApiService {
       },
     };
 
-    return this.request<any>(
+    return this.request<ApiResponse<Apartment>>(
       `/api/MediaAssets/upload-apartment-photo?apartmentId=${apartmentId}`,
       config
     );

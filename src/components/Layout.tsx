@@ -1,17 +1,16 @@
-import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { 
-  Home, 
-  Users, 
-  Building, 
-  CreditCard, 
-  Settings, 
-  LogOut, 
-  Menu, 
+import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import {
+  Home,
+  Users,
+  Building,
+  CreditCard,
+  LogOut,
+  Menu,
   X,
   Clock,
-  Tag
-} from 'lucide-react';
+  Tag,
+} from "lucide-react";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -20,12 +19,12 @@ interface LayoutProps {
 }
 
 const navigation = [
-  { name: 'Dashboard', icon: Home, id: 'dashboard' },
-  { name: 'Users', icon: Users, id: 'users' },
-  { name: 'Apartments', icon: Building, id: 'apartments' },
-  { name: 'Categories', icon: Tag, id: 'categories' },
-  { name: 'Transactions', icon: CreditCard, id: 'transactions' },
-  { name: 'TickerQ', icon: Clock, id: 'tickerq' },
+  { name: "Dashboard", icon: Home, id: "dashboard" },
+  { name: "Users", icon: Users, id: "users" },
+  { name: "Apartments", icon: Building, id: "apartments" },
+  { name: "Categories", icon: Tag, id: "categories" },
+  { name: "Transactions", icon: CreditCard, id: "transactions" },
+  { name: "TickerQ", icon: Clock, id: "tickerq" },
 ];
 
 export function Layout({ children, currentView, onViewChange }: LayoutProps) {
@@ -37,17 +36,23 @@ export function Layout({ children, currentView, onViewChange }: LayoutProps) {
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
-          <div className="fixed inset-0 bg-black bg-opacity-25" onClick={() => setSidebarOpen(false)} />
+          <div
+            className="fixed inset-0 bg-black bg-opacity-25"
+            onClick={() => setSidebarOpen(false)}
+          />
         </div>
       )}
 
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}>
+      <div
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
         <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
           <h1 className="text-xl font-bold text-gray-900">AgrlyAPI Admin</h1>
           <button
+            title="Close sidebar"
             onClick={() => setSidebarOpen(false)}
             className="lg:hidden p-1 rounded-md hover:bg-gray-100"
           >
@@ -66,8 +71,8 @@ export function Layout({ children, currentView, onViewChange }: LayoutProps) {
                   }}
                   className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
                     currentView === item.id
-                      ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700'
-                      : 'text-gray-700 hover:bg-gray-100'
+                      ? "bg-blue-50 text-blue-700 border-r-2 border-blue-700"
+                      : "text-gray-700 hover:bg-gray-100"
                   }`}
                 >
                   <item.icon className="mr-3 h-5 w-5" />
@@ -87,7 +92,9 @@ export function Layout({ children, currentView, onViewChange }: LayoutProps) {
                 </span>
               </div>
               <div className="ml-3">
-                <p className="text-sm font-medium text-gray-900">{user?.username}</p>
+                <p className="text-sm font-medium text-gray-900">
+                  {user?.username}
+                </p>
                 <p className="text-xs text-gray-500">Administrator</p>
               </div>
             </div>
@@ -110,6 +117,7 @@ export function Layout({ children, currentView, onViewChange }: LayoutProps) {
             <div className="flex justify-between h-16">
               <div className="flex items-center">
                 <button
+                  title="Open sidebar"
                   onClick={() => setSidebarOpen(true)}
                   className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
                 >
@@ -124,9 +132,7 @@ export function Layout({ children, currentView, onViewChange }: LayoutProps) {
         </div>
 
         {/* Page content */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8">
-          {children}
-        </main>
+        <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
       </div>
     </div>
   );
