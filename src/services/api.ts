@@ -8,7 +8,7 @@ import {
   LoginResponse,
 } from "../types/api";
 
-const API_BASE_URL = " http://agrly.runasp.net";
+const API_BASE_URL = " https://agrly.runasp.net";
 
 class ApiService {
   private token: string | null = null;
