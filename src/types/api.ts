@@ -68,6 +68,7 @@ export interface Category {
   icon: string;
   isActive: boolean;
   displayOrder: number;
+  imgPath: string;
   createdAt: string;
   updatedAt: string;
 }

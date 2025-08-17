@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { apiService } from "../services/api";
 import { Category } from "../types/api";
-import { Plus, Edit, Trash2, Tag, AlertCircle } from "lucide-react";
+import { Plus, Edit, Trash2, AlertCircle } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 export function CategoriesManager() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -122,11 +123,14 @@ export function CategoriesManager() {
           >
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center">
-                <div className="h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
-                  {category.icon ? (
-                    <span className="text-lg">{category.icon}</span>
+                <div className="h-14 w-14 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                  {category.imgPath ? (
+                    <Avatar>
+                      <AvatarImage src={category.imgPath} alt="@shadcn" />
+                      <AvatarFallback>{category.icon}</AvatarFallback>
+                    </Avatar>
                   ) : (
-                    <Tag className="h-5 w-5 text-blue-600" />
+                    <span className="text-lg">{category.icon}</span>
                   )}
                 </div>
                 <div>

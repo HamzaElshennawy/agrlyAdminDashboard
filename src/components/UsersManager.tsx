@@ -11,6 +11,7 @@ import {
   UserCheck,
   AlertCircle,
 } from "lucide-react";
+import { ScrollArea } from "../components/ui/scroll-area";
 
 export function UsersManager() {
   const [users, setUsers] = useState<User[]>([]);
@@ -100,7 +101,7 @@ export function UsersManager() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full">
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center gap-3">
           <AlertCircle className="h-5 w-5 text-red-500" />
@@ -109,11 +110,11 @@ export function UsersManager() {
       )}
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h1 className="text-2xl font-bold text-gray-900">Users</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full">
+        <h1 className="text-2xl font-bold text-gray-900 w-full">Users</h1>
         <button
           onClick={() => setShowAddModal(true)}
-          className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors w-full sm:w-auto mb-2 sm:mb-0"
         >
           <Plus className="h-4 w-4 mr-2" />
           Add User
@@ -121,7 +122,7 @@ export function UsersManager() {
       </div>
 
       {/* Search */}
-      <div className="relative">
+      <div className="relative w-full sm:w-1/2">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
         <input
           type="text"
@@ -133,387 +134,383 @@ export function UsersManager() {
       </div>
 
       {/* Users Table */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  User
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Role
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Created
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredUsers.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center">
-                        <span className="text-sm font-medium text-gray-700">
-                          {user.firstName?.[0] || user.username?.[0] || "U"}
-                        </span>
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">
-                          {user.firstName} {user.lastName}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {user.email}
-                        </div>
-                      </div>
+      <ScrollArea className="w-full max-w-full overflow-x-auto rounded-lg border border-gray-200">
+        <table className="min-w-[600px] sm:min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                User
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Status
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Role
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Created
+              </th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {filteredUsers.map((user) => (
+              <tr key={user.id} className="hover:bg-gray-50">
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="flex items-center">
+                    <div className="h-10 w-10 bg-gray-200 rounded-full flex items-center justify-center">
+                      <span className="text-sm font-medium text-gray-700">
+                        {user.firstName?.[0] || user.username?.[0] || "U"}
+                      </span>
                     </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex flex-col gap-1">
-                      {user.emailVerified && (
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          <UserCheck className="h-3 w-3 mr-1" />
-                          Email Verified
-                        </span>
-                      )}
-                      {user.governmentIdVerified && (
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          ID Verified
-                        </span>
-                      )}
+                    <div className="ml-4">
+                      <div className="text-sm font-medium text-gray-900">
+                        {user.firstName} {user.lastName}
+                      </div>
+                      <div className="text-sm text-gray-500">{user.email}</div>
                     </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                        user.isAdmin
-                          ? "bg-purple-100 text-purple-800"
-                          : user.isSuperhost
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
-                      {user.isAdmin && <Shield className="h-3 w-3 mr-1" />}
-                      {user.isAdmin
-                        ? "Admin"
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="flex flex-col gap-1">
+                    {user.emailVerified && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        <UserCheck className="h-3 w-3 mr-1" />
+                        Email Verified
+                      </span>
+                    )}
+                    {user.governmentIdVerified && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        ID Verified
+                      </span>
+                    )}
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span
+                    className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                      user.isAdmin
+                        ? "bg-purple-100 text-purple-800"
                         : user.isSuperhost
-                        ? "Superhost"
-                        : "User"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {new Date(user.createdAt).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <div className="flex items-center justify-end gap-2">
-                      <button
-                        title="Edit User"
-                        className="text-blue-600 hover:text-blue-900 p-1"
-                        onClick={() => handleEditIconClick(user)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </button>
-                      {/* Edit User Modal */}
-                      {showEditModal && editUser && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
-                          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg text-left max-h-[95vh] overflow-y-auto">
-                            <h2 className="text-xl font-bold mb-4 text-left">
-                              Edit User
-                            </h2>
-                            <form
-                              onSubmit={handleEditFormSubmit}
-                              className="space-y-4 text-left"
-                            >
-                              <div>
-                                <label
-                                  htmlFor="firstName"
-                                  className="block text-sm font-medium text-gray-700 mb-1"
-                                >
-                                  First Name
-                                </label>
+                        ? "bg-yellow-100 text-yellow-800"
+                        : "bg-gray-100 text-gray-800"
+                    }`}
+                  >
+                    {user.isAdmin && <Shield className="h-3 w-3 mr-1" />}
+                    {user.isAdmin
+                      ? "Admin"
+                      : user.isSuperhost
+                      ? "Superhost"
+                      : "User"}
+                  </span>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {new Date(user.createdAt).toLocaleDateString()}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <div className="flex items-center justify-end gap-2">
+                    <button
+                      title="Edit User"
+                      className="text-blue-600 hover:text-blue-900 p-1"
+                      onClick={() => handleEditIconClick(user)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </button>
+                    {/* Edit User Modal */}
+                    {showEditModal && editUser && (
+                      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+                        <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg text-left max-h-[95vh] overflow-y-auto">
+                          <h2 className="text-xl font-bold mb-4 text-left">
+                            Edit User
+                          </h2>
+                          <form
+                            onSubmit={handleEditFormSubmit}
+                            className="space-y-4 text-left"
+                          >
+                            <div>
+                              <label
+                                htmlFor="firstName"
+                                className="block text-sm font-medium text-gray-700 mb-1"
+                              >
+                                First Name
+                              </label>
+                              <input
+                                type="text"
+                                id="firstName"
+                                name="firstName"
+                                value={editForm.firstName || ""}
+                                onChange={handleEditFormChange}
+                                className="w-full border rounded px-3 py-2"
+                              />
+                            </div>
+                            <div>
+                              <label
+                                htmlFor="lastName"
+                                className="block text-sm font-medium text-gray-700 mb-1"
+                              >
+                                Last Name
+                              </label>
+                              <input
+                                type="text"
+                                id="lastName"
+                                name="lastName"
+                                value={editForm.lastName || ""}
+                                onChange={handleEditFormChange}
+                                className="w-full border rounded px-3 py-2"
+                              />
+                            </div>
+                            <div>
+                              <label
+                                htmlFor="email"
+                                className="block text-sm font-medium text-gray-700 mb-1"
+                              >
+                                Email
+                              </label>
+                              <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                value={editForm.email || ""}
+                                onChange={handleEditFormChange}
+                                className="w-full border rounded px-3 py-2"
+                              />
+                            </div>
+                            <div>
+                              <label
+                                htmlFor="username"
+                                className="block text-sm font-medium text-gray-700 mb-1"
+                              >
+                                Username
+                              </label>
+                              <input
+                                type="text"
+                                id="username"
+                                name="username"
+                                value={editForm.username || ""}
+                                onChange={handleEditFormChange}
+                                className="w-full border rounded px-3 py-2"
+                              />
+                            </div>
+                            <div>
+                              <label
+                                htmlFor="nationalID"
+                                className="block text-sm font-medium text-gray-700 mb-1"
+                              >
+                                National ID
+                              </label>
+                              <input
+                                type="text"
+                                id="nationalID"
+                                name="nationalID"
+                                value={editForm.nationalID || ""}
+                                onChange={handleEditFormChange}
+                                className="w-full border rounded px-3 py-2"
+                              />
+                            </div>
+                            <div>
+                              <label
+                                htmlFor="phone"
+                                className="block text-sm font-medium text-gray-700 mb-1"
+                              >
+                                Phone
+                              </label>
+                              <input
+                                type="text"
+                                id="phone"
+                                name="phone"
+                                value={editForm.phone || ""}
+                                onChange={handleEditFormChange}
+                                className="w-full border rounded px-3 py-2"
+                              />
+                            </div>
+                            <div>
+                              <label
+                                htmlFor="profilePictureUrl"
+                                className="block text-sm font-medium text-gray-700 mb-1"
+                              >
+                                Profile Picture URL
+                              </label>
+                              <input
+                                type="text"
+                                id="profilePictureUrl"
+                                name="profilePictureUrl"
+                                value={editForm.profilePictureUrl || ""}
+                                onChange={handleEditFormChange}
+                                className="w-full border rounded px-3 py-2"
+                              />
+                            </div>
+                            <div>
+                              <label
+                                htmlFor="bio"
+                                className="block text-sm font-medium text-gray-700 mb-1"
+                              >
+                                Bio
+                              </label>
+                              <input
+                                type="text"
+                                id="bio"
+                                name="bio"
+                                value={editForm.bio || ""}
+                                onChange={handleEditFormChange}
+                                className="w-full border rounded px-3 py-2"
+                              />
+                            </div>
+                            <div>
+                              <label
+                                htmlFor="dateOfBirth"
+                                className="block text-sm font-medium text-gray-700 mb-1"
+                              >
+                                Date of Birth
+                              </label>
+                              <input
+                                type="date"
+                                id="dateOfBirth"
+                                name="dateOfBirth"
+                                value={editForm.dateOfBirth || ""}
+                                onChange={handleEditFormChange}
+                                className="w-full border rounded px-3 py-2"
+                              />
+                            </div>
+                            <div>
+                              <label
+                                htmlFor="hostSince"
+                                className="block text-sm font-medium text-gray-700 mb-1"
+                              >
+                                Host Since
+                              </label>
+                              <input
+                                type="date"
+                                id="hostSince"
+                                name="hostSince"
+                                value={editForm.hostSince || ""}
+                                onChange={handleEditFormChange}
+                                className="w-full border rounded px-3 py-2"
+                              />
+                            </div>
+                            <div>
+                              <label
+                                htmlFor="preferredLanguage"
+                                className="block text-sm font-medium text-gray-700 mb-1"
+                              >
+                                Preferred Language
+                              </label>
+                              <input
+                                type="text"
+                                id="preferredLanguage"
+                                name="preferredLanguage"
+                                value={editForm.preferredLanguage || ""}
+                                onChange={handleEditFormChange}
+                                className="w-full border rounded px-3 py-2"
+                              />
+                            </div>
+                            <div>
+                              <label
+                                htmlFor="timezone"
+                                className="block text-sm font-medium text-gray-700 mb-1"
+                              >
+                                Timezone
+                              </label>
+                              <input
+                                type="text"
+                                id="timezone"
+                                name="timezone"
+                                value={editForm.timezone || ""}
+                                onChange={handleEditFormChange}
+                                className="w-full border rounded px-3 py-2"
+                              />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4 mt-2">
+                              <label className="flex items-center gap-2">
                                 <input
-                                  type="text"
-                                  id="firstName"
-                                  name="firstName"
-                                  value={editForm.firstName || ""}
+                                  type="checkbox"
+                                  name="isAdmin"
+                                  checked={!!editForm.isAdmin}
                                   onChange={handleEditFormChange}
-                                  className="w-full border rounded px-3 py-2"
                                 />
-                              </div>
-                              <div>
-                                <label
-                                  htmlFor="lastName"
-                                  className="block text-sm font-medium text-gray-700 mb-1"
-                                >
-                                  Last Name
-                                </label>
+                                <span>Admin</span>
+                              </label>
+                              <label className="flex items-center gap-2">
                                 <input
-                                  type="text"
-                                  id="lastName"
-                                  name="lastName"
-                                  value={editForm.lastName || ""}
+                                  type="checkbox"
+                                  name="isSuperhost"
+                                  checked={!!editForm.isSuperhost}
                                   onChange={handleEditFormChange}
-                                  className="w-full border rounded px-3 py-2"
                                 />
-                              </div>
-                              <div>
-                                <label
-                                  htmlFor="email"
-                                  className="block text-sm font-medium text-gray-700 mb-1"
-                                >
-                                  Email
-                                </label>
+                                <span>Superhost</span>
+                              </label>
+                              <label className="flex items-center gap-2">
                                 <input
-                                  type="email"
-                                  id="email"
-                                  name="email"
-                                  value={editForm.email || ""}
+                                  type="checkbox"
+                                  name="governmentIdVerified"
+                                  checked={!!editForm.governmentIdVerified}
                                   onChange={handleEditFormChange}
-                                  className="w-full border rounded px-3 py-2"
                                 />
-                              </div>
-                              <div>
-                                <label
-                                  htmlFor="username"
-                                  className="block text-sm font-medium text-gray-700 mb-1"
-                                >
-                                  Username
-                                </label>
+                                <span>Government ID Verified</span>
+                              </label>
+                              <label className="flex items-center gap-2">
                                 <input
-                                  type="text"
-                                  id="username"
-                                  name="username"
-                                  value={editForm.username || ""}
+                                  type="checkbox"
+                                  name="emailVerified"
+                                  checked={!!editForm.emailVerified}
                                   onChange={handleEditFormChange}
-                                  className="w-full border rounded px-3 py-2"
                                 />
-                              </div>
-                              <div>
-                                <label
-                                  htmlFor="nationalID"
-                                  className="block text-sm font-medium text-gray-700 mb-1"
-                                >
-                                  National ID
-                                </label>
+                                <span>Email Verified</span>
+                              </label>
+                              <label className="flex items-center gap-2">
                                 <input
-                                  type="text"
-                                  id="nationalID"
-                                  name="nationalID"
-                                  value={editForm.nationalID || ""}
+                                  type="checkbox"
+                                  name="phoneVerified"
+                                  checked={!!editForm.phoneVerified}
                                   onChange={handleEditFormChange}
-                                  className="w-full border rounded px-3 py-2"
                                 />
-                              </div>
-                              <div>
-                                <label
-                                  htmlFor="phone"
-                                  className="block text-sm font-medium text-gray-700 mb-1"
-                                >
-                                  Phone
-                                </label>
-                                <input
-                                  type="text"
-                                  id="phone"
-                                  name="phone"
-                                  value={editForm.phone || ""}
-                                  onChange={handleEditFormChange}
-                                  className="w-full border rounded px-3 py-2"
-                                />
-                              </div>
-                              <div>
-                                <label
-                                  htmlFor="profilePictureUrl"
-                                  className="block text-sm font-medium text-gray-700 mb-1"
-                                >
-                                  Profile Picture URL
-                                </label>
-                                <input
-                                  type="text"
-                                  id="profilePictureUrl"
-                                  name="profilePictureUrl"
-                                  value={editForm.profilePictureUrl || ""}
-                                  onChange={handleEditFormChange}
-                                  className="w-full border rounded px-3 py-2"
-                                />
-                              </div>
-                              <div>
-                                <label
-                                  htmlFor="bio"
-                                  className="block text-sm font-medium text-gray-700 mb-1"
-                                >
-                                  Bio
-                                </label>
-                                <input
-                                  type="text"
-                                  id="bio"
-                                  name="bio"
-                                  value={editForm.bio || ""}
-                                  onChange={handleEditFormChange}
-                                  className="w-full border rounded px-3 py-2"
-                                />
-                              </div>
-                              <div>
-                                <label
-                                  htmlFor="dateOfBirth"
-                                  className="block text-sm font-medium text-gray-700 mb-1"
-                                >
-                                  Date of Birth
-                                </label>
-                                <input
-                                  type="date"
-                                  id="dateOfBirth"
-                                  name="dateOfBirth"
-                                  value={editForm.dateOfBirth || ""}
-                                  onChange={handleEditFormChange}
-                                  className="w-full border rounded px-3 py-2"
-                                />
-                              </div>
-                              <div>
-                                <label
-                                  htmlFor="hostSince"
-                                  className="block text-sm font-medium text-gray-700 mb-1"
-                                >
-                                  Host Since
-                                </label>
-                                <input
-                                  type="date"
-                                  id="hostSince"
-                                  name="hostSince"
-                                  value={editForm.hostSince || ""}
-                                  onChange={handleEditFormChange}
-                                  className="w-full border rounded px-3 py-2"
-                                />
-                              </div>
-                              <div>
-                                <label
-                                  htmlFor="preferredLanguage"
-                                  className="block text-sm font-medium text-gray-700 mb-1"
-                                >
-                                  Preferred Language
-                                </label>
-                                <input
-                                  type="text"
-                                  id="preferredLanguage"
-                                  name="preferredLanguage"
-                                  value={editForm.preferredLanguage || ""}
-                                  onChange={handleEditFormChange}
-                                  className="w-full border rounded px-3 py-2"
-                                />
-                              </div>
-                              <div>
-                                <label
-                                  htmlFor="timezone"
-                                  className="block text-sm font-medium text-gray-700 mb-1"
-                                >
-                                  Timezone
-                                </label>
-                                <input
-                                  type="text"
-                                  id="timezone"
-                                  name="timezone"
-                                  value={editForm.timezone || ""}
-                                  onChange={handleEditFormChange}
-                                  className="w-full border rounded px-3 py-2"
-                                />
-                              </div>
-                              <div className="grid grid-cols-2 gap-4 mt-2">
-                                <label className="flex items-center gap-2">
-                                  <input
-                                    type="checkbox"
-                                    name="isAdmin"
-                                    checked={!!editForm.isAdmin}
-                                    onChange={handleEditFormChange}
-                                  />
-                                  <span>Admin</span>
-                                </label>
-                                <label className="flex items-center gap-2">
-                                  <input
-                                    type="checkbox"
-                                    name="isSuperhost"
-                                    checked={!!editForm.isSuperhost}
-                                    onChange={handleEditFormChange}
-                                  />
-                                  <span>Superhost</span>
-                                </label>
-                                <label className="flex items-center gap-2">
-                                  <input
-                                    type="checkbox"
-                                    name="governmentIdVerified"
-                                    checked={!!editForm.governmentIdVerified}
-                                    onChange={handleEditFormChange}
-                                  />
-                                  <span>Government ID Verified</span>
-                                </label>
-                                <label className="flex items-center gap-2">
-                                  <input
-                                    type="checkbox"
-                                    name="emailVerified"
-                                    checked={!!editForm.emailVerified}
-                                    onChange={handleEditFormChange}
-                                  />
-                                  <span>Email Verified</span>
-                                </label>
-                                <label className="flex items-center gap-2">
-                                  <input
-                                    type="checkbox"
-                                    name="phoneVerified"
-                                    checked={!!editForm.phoneVerified}
-                                    onChange={handleEditFormChange}
-                                  />
-                                  <span>Phone Verified</span>
-                                </label>
-                              </div>
-                              <div className="flex justify-end gap-2 mt-6">
-                                <button
-                                  type="button"
-                                  className="px-4 py-2 bg-gray-200 rounded"
-                                  onClick={() => {
-                                    setShowEditModal(false);
-                                    setEditUser(null);
-                                    setEditForm({});
-                                  }}
-                                >
-                                  Cancel
-                                </button>
-                                <button
-                                  type="submit"
-                                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                                >
-                                  Save
-                                </button>
-                              </div>
-                            </form>
-                          </div>
+                                <span>Phone Verified</span>
+                              </label>
+                            </div>
+                            <div className="flex justify-end gap-2 mt-6">
+                              <button
+                                type="button"
+                                className="px-4 py-2 bg-gray-200 rounded"
+                                onClick={() => {
+                                  setShowEditModal(false);
+                                  setEditUser(null);
+                                  setEditForm({});
+                                }}
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                type="submit"
+                                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                              >
+                                Save
+                              </button>
+                            </div>
+                          </form>
                         </div>
-                      )}
-                      <button
-                        title="Delete User"
-                        onClick={() => handleDeleteUser(user.id)}
-                        className="text-red-600 hover:text-red-900 p-1"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                      </div>
+                    )}
+                    <button
+                      title="Delete User"
+                      onClick={() => handleDeleteUser(user.id)}
+                      className="text-red-600 hover:text-red-900 p-1"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </ScrollArea>
 
-        {filteredUsers.length === 0 && (
-          <div className="text-center py-8">
-            <p className="text-gray-500">No users found</p>
-          </div>
-        )}
-      </div>
+      {filteredUsers.length === 0 && (
+        <div className="text-center py-8">
+          <p className="text-gray-500">No users found</p>
+        </div>
+      )}
     </div>
   );
 }
